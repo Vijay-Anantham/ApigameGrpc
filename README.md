@@ -5,7 +5,7 @@ Here in this application we try to have one grpc server and multiple client inte
     - Records the max score of a player and update it realtime to a dashboard client
 - players
     - The players roll for a number and update the server if a number is taken
-- roller
+- server
     - the roller will get the available pool from the serer and allocates number to a player.
     - This should not allot repeated numbers.
 
