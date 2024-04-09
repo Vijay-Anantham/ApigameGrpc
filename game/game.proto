@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option go_package = "github.com/hellogrpc/game";
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.helloworld";
+// option java_outer_classname = "HelloWorldProto";
+
+package game;
+
+// The greeting service definition.
+service Roller {
+  // Sends a greeting
+  rpc MakeRoll (RollRequest) returns (RollReply) {}
+}
+
+service UpdateScore{
+  rpc UpdateDashboardScore (ScoreRequest) returns (stream ScoreReply) {}
+}
+
+// The request message containing the user's name.
+message RollRequest {
+  string name = 1;
+  int32 playerId = 2;
+}
+
+// The response message containing the greetings
+message RollReply {
+  int32 rollvalue = 1;
+  int32 score = 2;
+}
+
+// Sending connection id here to secure the connection it is sending stream metric to
+message ScoreRequest {
+  int32 connectionId = 1;
+  // the request param can be of score type maybe
+}
+
+message ScoreReply {
+  string name = 1;
+  int32 playerId = 2;
+  int32 score = 3;
+}
+
+// TODO: Currently trying out to get score from an single go what if we get scores based on a playerId or only the top 3 scores ?
