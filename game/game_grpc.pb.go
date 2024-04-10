@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.26.1
-// source: protofiles/game.proto
+// source: game.proto
 
 package game
 
@@ -18,115 +18,38 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// RollerClient is the client API for Roller service.
+// ServerServiceClient is the client API for ServerService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type RollerClient interface {
+type ServerServiceClient interface {
 	// Sends a greeting
 	MakeRoll(ctx context.Context, in *RollRequest, opts ...grpc.CallOption) (*RollReply, error)
+	UpdateDashboardScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (ServerService_UpdateDashboardScoreClient, error)
 }
 
-type rollerClient struct {
+type serverServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewRollerClient(cc grpc.ClientConnInterface) RollerClient {
-	return &rollerClient{cc}
+func NewServerServiceClient(cc grpc.ClientConnInterface) ServerServiceClient {
+	return &serverServiceClient{cc}
 }
 
-func (c *rollerClient) MakeRoll(ctx context.Context, in *RollRequest, opts ...grpc.CallOption) (*RollReply, error) {
+func (c *serverServiceClient) MakeRoll(ctx context.Context, in *RollRequest, opts ...grpc.CallOption) (*RollReply, error) {
 	out := new(RollReply)
-	err := c.cc.Invoke(ctx, "/game.Roller/MakeRoll", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/game.ServerService/MakeRoll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RollerServer is the server API for Roller service.
-// All implementations must embed UnimplementedRollerServer
-// for forward compatibility
-type RollerServer interface {
-	// Sends a greeting
-	MakeRoll(context.Context, *RollRequest) (*RollReply, error)
-	mustEmbedUnimplementedRollerServer()
-}
-
-// UnimplementedRollerServer must be embedded to have forward compatible implementations.
-type UnimplementedRollerServer struct {
-}
-
-func (UnimplementedRollerServer) MakeRoll(context.Context, *RollRequest) (*RollReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MakeRoll not implemented")
-}
-func (UnimplementedRollerServer) mustEmbedUnimplementedRollerServer() {}
-
-// UnsafeRollerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to RollerServer will
-// result in compilation errors.
-type UnsafeRollerServer interface {
-	mustEmbedUnimplementedRollerServer()
-}
-
-func RegisterRollerServer(s grpc.ServiceRegistrar, srv RollerServer) {
-	s.RegisterService(&Roller_ServiceDesc, srv)
-}
-
-func _Roller_MakeRoll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RollRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RollerServer).MakeRoll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/game.Roller/MakeRoll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RollerServer).MakeRoll(ctx, req.(*RollRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Roller_ServiceDesc is the grpc.ServiceDesc for Roller service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Roller_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "game.Roller",
-	HandlerType: (*RollerServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "MakeRoll",
-			Handler:    _Roller_MakeRoll_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "protofiles/game.proto",
-}
-
-// UpdateScoreClient is the client API for UpdateScore service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UpdateScoreClient interface {
-	UpdateDashboardScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (UpdateScore_UpdateDashboardScoreClient, error)
-}
-
-type updateScoreClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewUpdateScoreClient(cc grpc.ClientConnInterface) UpdateScoreClient {
-	return &updateScoreClient{cc}
-}
-
-func (c *updateScoreClient) UpdateDashboardScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (UpdateScore_UpdateDashboardScoreClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UpdateScore_ServiceDesc.Streams[0], "/game.UpdateScore/UpdateDashboardScore", opts...)
+func (c *serverServiceClient) UpdateDashboardScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (ServerService_UpdateDashboardScoreClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ServerService_ServiceDesc.Streams[0], "/game.ServerService/UpdateDashboardScore", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &updateScoreUpdateDashboardScoreClient{stream}
+	x := &serverServiceUpdateDashboardScoreClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -136,16 +59,16 @@ func (c *updateScoreClient) UpdateDashboardScore(ctx context.Context, in *ScoreR
 	return x, nil
 }
 
-type UpdateScore_UpdateDashboardScoreClient interface {
+type ServerService_UpdateDashboardScoreClient interface {
 	Recv() (*ScoreReply, error)
 	grpc.ClientStream
 }
 
-type updateScoreUpdateDashboardScoreClient struct {
+type serverServiceUpdateDashboardScoreClient struct {
 	grpc.ClientStream
 }
 
-func (x *updateScoreUpdateDashboardScoreClient) Recv() (*ScoreReply, error) {
+func (x *serverServiceUpdateDashboardScoreClient) Recv() (*ScoreReply, error) {
 	m := new(ScoreReply)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -153,68 +76,218 @@ func (x *updateScoreUpdateDashboardScoreClient) Recv() (*ScoreReply, error) {
 	return m, nil
 }
 
-// UpdateScoreServer is the server API for UpdateScore service.
-// All implementations must embed UnimplementedUpdateScoreServer
+// ServerServiceServer is the server API for ServerService service.
+// All implementations must embed UnimplementedServerServiceServer
 // for forward compatibility
-type UpdateScoreServer interface {
-	UpdateDashboardScore(*ScoreRequest, UpdateScore_UpdateDashboardScoreServer) error
-	mustEmbedUnimplementedUpdateScoreServer()
+type ServerServiceServer interface {
+	// Sends a greeting
+	MakeRoll(context.Context, *RollRequest) (*RollReply, error)
+	UpdateDashboardScore(*ScoreRequest, ServerService_UpdateDashboardScoreServer) error
+	mustEmbedUnimplementedServerServiceServer()
 }
 
-// UnimplementedUpdateScoreServer must be embedded to have forward compatible implementations.
-type UnimplementedUpdateScoreServer struct {
+// UnimplementedServerServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServerServiceServer struct {
 }
 
-func (UnimplementedUpdateScoreServer) UpdateDashboardScore(*ScoreRequest, UpdateScore_UpdateDashboardScoreServer) error {
+func (UnimplementedServerServiceServer) MakeRoll(context.Context, *RollRequest) (*RollReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeRoll not implemented")
+}
+func (UnimplementedServerServiceServer) UpdateDashboardScore(*ScoreRequest, ServerService_UpdateDashboardScoreServer) error {
 	return status.Errorf(codes.Unimplemented, "method UpdateDashboardScore not implemented")
 }
-func (UnimplementedUpdateScoreServer) mustEmbedUnimplementedUpdateScoreServer() {}
+func (UnimplementedServerServiceServer) mustEmbedUnimplementedServerServiceServer() {}
 
-// UnsafeUpdateScoreServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UpdateScoreServer will
+// UnsafeServerServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServerServiceServer will
 // result in compilation errors.
-type UnsafeUpdateScoreServer interface {
-	mustEmbedUnimplementedUpdateScoreServer()
+type UnsafeServerServiceServer interface {
+	mustEmbedUnimplementedServerServiceServer()
 }
 
-func RegisterUpdateScoreServer(s grpc.ServiceRegistrar, srv UpdateScoreServer) {
-	s.RegisterService(&UpdateScore_ServiceDesc, srv)
+func RegisterServerServiceServer(s grpc.ServiceRegistrar, srv ServerServiceServer) {
+	s.RegisterService(&ServerService_ServiceDesc, srv)
 }
 
-func _UpdateScore_UpdateDashboardScore_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _ServerService_MakeRoll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RollRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServerServiceServer).MakeRoll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/game.ServerService/MakeRoll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServerServiceServer).MakeRoll(ctx, req.(*RollRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServerService_UpdateDashboardScore_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ScoreRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(UpdateScoreServer).UpdateDashboardScore(m, &updateScoreUpdateDashboardScoreServer{stream})
+	return srv.(ServerServiceServer).UpdateDashboardScore(m, &serverServiceUpdateDashboardScoreServer{stream})
 }
 
-type UpdateScore_UpdateDashboardScoreServer interface {
+type ServerService_UpdateDashboardScoreServer interface {
 	Send(*ScoreReply) error
 	grpc.ServerStream
 }
 
-type updateScoreUpdateDashboardScoreServer struct {
+type serverServiceUpdateDashboardScoreServer struct {
 	grpc.ServerStream
 }
 
-func (x *updateScoreUpdateDashboardScoreServer) Send(m *ScoreReply) error {
+func (x *serverServiceUpdateDashboardScoreServer) Send(m *ScoreReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-// UpdateScore_ServiceDesc is the grpc.ServiceDesc for UpdateScore service.
+// ServerService_ServiceDesc is the grpc.ServiceDesc for ServerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UpdateScore_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "game.UpdateScore",
-	HandlerType: (*UpdateScoreServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+var ServerService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "game.ServerService",
+	HandlerType: (*ServerServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "MakeRoll",
+			Handler:    _ServerService_MakeRoll_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "UpdateDashboardScore",
-			Handler:       _UpdateScore_UpdateDashboardScore_Handler,
+			Handler:       _ServerService_UpdateDashboardScore_Handler,
 			ServerStreams: true,
 		},
 	},
-	Metadata: "protofiles/game.proto",
+	Metadata: "game.proto",
+}
+
+// PlayerServiceClient is the client API for PlayerService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type PlayerServiceClient interface {
+	AddPlayer(ctx context.Context, in *AddPlayerRequest, opts ...grpc.CallOption) (*AddPlayerResponse, error)
+	DeletePlayer(ctx context.Context, in *DeletePlayerRequest, opts ...grpc.CallOption) (*DeletePlayerResponse, error)
+}
+
+type playerServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPlayerServiceClient(cc grpc.ClientConnInterface) PlayerServiceClient {
+	return &playerServiceClient{cc}
+}
+
+func (c *playerServiceClient) AddPlayer(ctx context.Context, in *AddPlayerRequest, opts ...grpc.CallOption) (*AddPlayerResponse, error) {
+	out := new(AddPlayerResponse)
+	err := c.cc.Invoke(ctx, "/game.PlayerService/AddPlayer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *playerServiceClient) DeletePlayer(ctx context.Context, in *DeletePlayerRequest, opts ...grpc.CallOption) (*DeletePlayerResponse, error) {
+	out := new(DeletePlayerResponse)
+	err := c.cc.Invoke(ctx, "/game.PlayerService/DeletePlayer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PlayerServiceServer is the server API for PlayerService service.
+// All implementations must embed UnimplementedPlayerServiceServer
+// for forward compatibility
+type PlayerServiceServer interface {
+	AddPlayer(context.Context, *AddPlayerRequest) (*AddPlayerResponse, error)
+	DeletePlayer(context.Context, *DeletePlayerRequest) (*DeletePlayerResponse, error)
+	mustEmbedUnimplementedPlayerServiceServer()
+}
+
+// UnimplementedPlayerServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedPlayerServiceServer struct {
+}
+
+func (UnimplementedPlayerServiceServer) AddPlayer(context.Context, *AddPlayerRequest) (*AddPlayerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPlayer not implemented")
+}
+func (UnimplementedPlayerServiceServer) DeletePlayer(context.Context, *DeletePlayerRequest) (*DeletePlayerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePlayer not implemented")
+}
+func (UnimplementedPlayerServiceServer) mustEmbedUnimplementedPlayerServiceServer() {}
+
+// UnsafePlayerServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PlayerServiceServer will
+// result in compilation errors.
+type UnsafePlayerServiceServer interface {
+	mustEmbedUnimplementedPlayerServiceServer()
+}
+
+func RegisterPlayerServiceServer(s grpc.ServiceRegistrar, srv PlayerServiceServer) {
+	s.RegisterService(&PlayerService_ServiceDesc, srv)
+}
+
+func _PlayerService_AddPlayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddPlayerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlayerServiceServer).AddPlayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/game.PlayerService/AddPlayer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlayerServiceServer).AddPlayer(ctx, req.(*AddPlayerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PlayerService_DeletePlayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePlayerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlayerServiceServer).DeletePlayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/game.PlayerService/DeletePlayer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlayerServiceServer).DeletePlayer(ctx, req.(*DeletePlayerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// PlayerService_ServiceDesc is the grpc.ServiceDesc for PlayerService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var PlayerService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "game.PlayerService",
+	HandlerType: (*PlayerServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddPlayer",
+			Handler:    _PlayerService_AddPlayer_Handler,
+		},
+		{
+			MethodName: "DeletePlayer",
+			Handler:    _PlayerService_DeletePlayer_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "game.proto",
 }

@@ -8,13 +8,15 @@ option go_package = "github.com/hellogrpc/game";
 package game;
 
 // The greeting service definition.
-service Roller {
+service ServerService {
   // Sends a greeting
   rpc MakeRoll (RollRequest) returns (RollReply) {}
+  rpc UpdateDashboardScore (ScoreRequest) returns (stream ScoreReply) {}
 }
 
-service UpdateScore{
-  rpc UpdateDashboardScore (ScoreRequest) returns (stream ScoreReply) {}
+service PlayerService{
+  rpc AddPlayer (AddPlayerRequest) returns (AddPlayerResponse) {}
+  rpc DeletePlayer (DeletePlayerRequest) returns (DeletePlayerResponse) {}
 }
 
 // The request message containing the user's name.
@@ -40,5 +42,27 @@ message ScoreReply {
   int32 playerId = 2;
   int32 score = 3;
 }
+
+message AddPlayerRequest {
+  string name = 1;
+}
+
+message AddPlayerResponse {
+  int32 playerId = 1;
+  string status_message = 2;
+  int32 error_code = 3;
+}
+
+message DeletePlayerRequest {
+  int32 playerId = 1;
+}
+
+message DeletePlayerResponse {
+  int32 playerId = 1;
+  string status_message = 2;
+  int32 error_code = 3;
+}
+
+
 
 // TODO: Currently trying out to get score from an single go what if we get scores based on a playerId or only the top 3 scores ?
