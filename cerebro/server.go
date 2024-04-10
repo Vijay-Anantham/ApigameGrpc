@@ -23,9 +23,10 @@ type Server struct {
 
 // Player struct definition
 type Player struct {
-	Id    int32
-	Name  string
-	Score int32
+	Id      int32
+	Name    string
+	Score   int32
+	alotted map[int32]interface{}
 }
 
 // Function initialise connection with server and kick start RPC connections
@@ -45,6 +46,7 @@ func (c *Server) Makeroll(request *pb.RollRequest) (*pb.RollReply, error) {
 		return nil, fmt.Errorf("player with ID %d not found", request.PlayerId)
 	}
 	player.Score += rolled
+	player.alotted[rolled] = true
 	c.Scoreboard[request.PlayerId] = player
 
 	var score, err = c.getScore(request.GetPlayerId())
@@ -57,21 +59,20 @@ func (c *Server) Makeroll(request *pb.RollRequest) (*pb.RollReply, error) {
 func (c *Server) AddPlayer(player *pb.AddPlayerRequest) *pb.AddPlayerResponse {
 	var playerId = c.generatePlayerId()
 	var newbie = Player{
-		Id:    playerId,
-		Name:  player.GetName(),
-		Score: 0,
+		Id:      playerId,
+		Name:    player.GetName(),
+		Score:   0,
+		alotted: map[int32]interface{}{},
 	}
 	c.Scoreboard[playerId] = newbie
 	return &pb.AddPlayerResponse{PlayerId: playerId}
 }
 
 func (c *Server) DeletePlayer(player *pb.DeletePlayerRequest) *pb.DeletePlayerResponse {
-	//TODO: clean up the allotment of the number for the player
 	var deleteplayer = player.GetPlayerId()
+	// clean up the allotment maybe if needed
 	delete(c.Scoreboard, deleteplayer)
-
 	return &pb.DeletePlayerResponse{PlayerId: deleteplayer, StatusMessage: fmt.Sprintf("%d has been deleted", deleteplayer)}
-
 }
 
 // Function generates a random number
