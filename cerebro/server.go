@@ -1,8 +1,8 @@
 package cerebro
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
@@ -10,7 +10,6 @@ import (
 )
 
 // TODO: All code for server governance
-// TODO: 1. generate random score roll values
 // TODO: 2. Update score pool
 // TODO: 3. update alloted number
 // INFO: Scoreboard: This marks the final data board for updating and tracking scores
@@ -31,7 +30,7 @@ type Player struct {
 
 // Function initialise connection with server and kick start RPC connections
 func (c *Server) InitServer() {
-
+	//TODO: place where we define the grpc.Newserver maybe
 }
 
 // This is an random number generator from the pool
@@ -49,11 +48,7 @@ func (c *Server) Makeroll(request *pb.RollRequest) (*pb.RollReply, error) {
 	player.alotted[rolled] = true
 	c.Scoreboard[request.PlayerId] = player
 
-	var score, err = c.getScore(request.GetPlayerId())
-	if err != nil {
-		log.Printf("Error retreving score value of %s", request.GetName())
-	}
-	return &pb.RollReply{Rollvalue: 12, Score: score}, nil
+	return &pb.RollReply{Rollvalue: 12, Score: player.Score}, nil
 }
 
 func (c *Server) AddPlayer(player *pb.AddPlayerRequest) *pb.AddPlayerResponse {
@@ -89,21 +84,22 @@ func (c *Server) isAlloted(val int32) bool {
 	return c.alloted[val]
 }
 
-// Function to update the latest code and update it on the `Scoreboard`
+// Get the latest score from the server
 func (c *Server) getScore(playerId int32) (int32, error) {
-	return 0, nil
+	player, ok := c.Scoreboard[playerId]
+	if ok {
+		score := player.Score
+		return score, nil
+	}
+	return 0, errors.New("error getting player: player not found")
 }
 
-// This checks the `Scoreboard` for the current score of the player
-func (c *Server) getScoreRegistry(playerId int32) (int32, error) {
-	return 0, nil
-}
 func (c *Server) generatePlayerId() int32 {
 	var currentId = 0
 	return int32(currentId + 1)
 }
 
-// Function updates score on the `scoreboard`
+// Function updates score on the `scoreboard` from the server
 func (c *Server) updateScores(playerId int32) error {
 
 	return nil

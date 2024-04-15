@@ -20,3 +20,9 @@ protoc --go_out=./game --go_opt=paths=source_relative \
 ```
 ## Resources
 [Medium Docs on HTTP2](https://cabulous.medium.com/http-2-and-how-it-works-9f645458e4b2)
+[Protobuf guide to generate go functions](https://protobuf.dev/reference/go/go-generated/)
+[go package from protobuf](https://github.com/protocolbuffers/protobuf-go)
+[example for developing basic protobuf](https://github.com/grpc/grpc-go/blob/master/examples/)
+[Generate code reference from grpc](https://grpc.io/docs/languages/go/generated-code/)
+[different grpc communication definition](https://grpc.io/docs/languages/go/basics/)
+[noted on http/grpc](https://medium.com/geekculture/how-to-create-grpc-microservices-with-jpa-b3e804b4d91e)
